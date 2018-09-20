@@ -36,7 +36,7 @@ For more info, see: [https://www.graalvm.org/docs/](https://www.graalvm.org/docs
 
 | hugheba-graaljs-ignite Version | Ignite Version | GSON version | GroovyVersion |
 |---|---|---|---|
-| 1.0.0 | 2.6.0 | 2.8.5 | 2.5.3 |
+| 1.0.0 | 2.6.0 | 2.8.5 | 2.5.2 |
 
 ## Example
 
@@ -45,7 +45,7 @@ var IgniteBridge = require('hugheba-graaljs-ignite');
 
 var config = {
         connection: {
-            // See https://apacheignite.readme.io/docs/tcpip-discovery
+            // @see https://apacheignite.readme.io/docs/tcpip-discovery
             ipFinder: 'TcpDiscoveryMulticastIpFinder', 
             // IP Address of other nodes in cluster
             addresses: ['127.0.0.1:47500..47509'],
@@ -56,7 +56,8 @@ var config = {
             {
                 // Name for cache in Ignite
                 name: 'default',
-                // Options are: LOCAL, PARTITIONED or REPLICATED, see https://apacheignite.readme.io/docs/cache-modes
+                // Options are: LOCAL, PARTITIONED or REPLICATED, 
+                // @see https://apacheignite.readme.io/docs/cache-modes
                 cacheMode: 'PARTITIONED' 
             },
         ],
