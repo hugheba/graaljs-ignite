@@ -12,9 +12,9 @@ Install the Node.js module
     
 Run your Node.js application under GraalVM.
 
-    $> npm \
+    $> node \
           --jvm \
-          --jvm.cp='./node_modules/hugheba-graaljs-ignite/lib/hugheba-graaljs-ignite.jar" \ 
+          --jvm.cp='./node_modules/hugheba-graaljs-ignite/lib/hugheba-graaljs-ignite-all.jar" \ 
           index.js
           
 ## Apache Ignite
@@ -33,6 +33,24 @@ For more info, see: [https://ignite.apache.org](https://ignite.apache.org)
 For more info, see: [https://www.graalvm.org/docs/](https://www.graalvm.org/docs/)
 
 ## Version Dependencies
+
+The IgniteBridge requires several Java dependencies.
+
+This bundle provides two options for adding dependencies through the node --jvm.cp argument.
+
+- _**hugheba-graaljs-ignite-all.jar**_ : An all-in-one jar with with the dependencies below included.
+- _**hugheba-graaljs-ignite.jar**_ : A jar containing only module functionality and no dependences.
+
+### Manual Dependency Management 
+
+To use this plugin and supply your own dependencies, download the required jars and add them to a folder named `lib` the root of your project.
+ 
+Modify the run command above to look like this:
+
+    $> node \
+          --jvm \
+          --jvm.cp="lib/*:./node_modules/hugheba-graaljs-ignite/lib/hugheba-graaljs-ignite.jar" \
+          index.js
 
 | hugheba-graaljs-ignite Version | Ignite Version | GSON Version | Groovy Version |
 |---|---|---|---|
@@ -76,11 +94,12 @@ console.log('Cache returned ' + defaultCache.get(cacheKey));
 // Messaging Example
 ib.subscribe(topic, function(message) {
     console.log('Topic ' + topic + ' received message: ' + message);
+    console.log('Topic ' + topic + '.message: ' + JSON.parse(message).message);
 });
 ib.broadcast(topic, {
     status: true,
     code: 200,
-    message: 'This object will be JSON serialized/deserialized over the wire, and sent to every subscriber in the cluster.',
+    message: 'This object will be JSON serialized over the wire, and sent to every subscriber in the cluster.',
 });
 
 ```
