@@ -8,7 +8,7 @@ module.exports = class IgniteBridge {
     }
 
     connect() {
-        const IB = Java.type('com.hugheba.sails.hook.ignite.IgniteBridge');
+        const IB = Java.type('com.hugheba.graal.js.ignite.IgniteBridge');
         this.javaBridge = new IB(JSON.stringify(this.config));
     }
 
