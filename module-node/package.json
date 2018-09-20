@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.0-RC1",
   "name": "hugheba-graaljs-ignite",
   "description": "Apache Ignite integration into Node.js running under GraalVM",
   "homepage": "https://github.com/hugheba/graaljs-ignite",
