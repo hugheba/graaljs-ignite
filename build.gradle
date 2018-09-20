@@ -1,0 +1,7 @@
+plugins {
+    //    id "com.zoltu.git-versioning" version "3.0.3"
+}
+
+task wrapper(type:Wrapper) {
+    gradleVersion="4.10.1"
+}

@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0",
+  "name": "hugheba-graaljs-ignite",
+  "description": "Apache Ignite integration into Node.js running under GraalVM",
+  "homepage": "https://github.com/hugheba/graaljs-ignite",
+  "author": {
+    "name": "Bryan Hughes",
+    "email": "hugheba@gmail.com"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "ISC",
+  "dev-dependencies": {
+    "release-it": "^7.6.1"
+  }
+}

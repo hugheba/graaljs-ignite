@@ -1,0 +1,4 @@
+rootProject.name = 'hugheba-graaljs-ignite'
+
+include 'module-graal-bridge'
+include 'module-node'
