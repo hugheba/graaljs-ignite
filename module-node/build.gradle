@@ -4,13 +4,11 @@ plugins {
 
 node { download = false }
 
-task release(type: NodeTask) {
+task release() {
     dependsOn ':module-graal-bridge:release'
 
     doFirst {
         ant.delete file: './lib/**/*.jar'
         ant.copy file: "${project.parent.project('module-graal-bridge').projectDir}/build/libs/hugheba-graaljs-ignite.jar", todir: "./lib/"
     }
-
-    script = file('scripts/release.js')
 }
