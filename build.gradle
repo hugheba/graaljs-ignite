@@ -1,5 +1,9 @@
 plugins {
-    id "com.zoltu.git-versioning" version "3.0.3"
+    id 'net.nemerosa.versioning' version '2.7.1'
+}
+
+allprojects {
+    version = versioning.info.tag
 }
 
 task wrapper(type:Wrapper) {
