@@ -34,7 +34,7 @@ For more info, see: [https://www.graalvm.org/docs/](https://www.graalvm.org/docs
 
 ## Version Dependencies
 
-| hugheba-graaljs-ignite Version | Ignite Version | GSON version | GroovyVersion |
+| hugheba-graaljs-ignite Version | Ignite Version | GSON Version | Groovy Version |
 |---|---|---|---|
 | 1.0.0 | 2.6.0 | 2.8.5 | 2.5.2 |
 
