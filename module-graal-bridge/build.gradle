@@ -16,8 +16,12 @@ dependencies() {
     compile "org.apache.ignite:ignite-core:2.6.0"
 }
 
-shadowJar {
+jar {
     archiveName = "hugheba-graaljs-ignite.${extension}"
 }
 
-task release(dependsOn: shadowJar)
+shadowJar {
+    archiveName = "hugheba-graaljs-ignite-all.${extension}"
+}
+
+task release(dependsOn: [jar,shadowJar])

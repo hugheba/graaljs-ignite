@@ -9,6 +9,10 @@ task release() {
 
     doFirst {
         ant.delete file: './lib/**/*.jar'
-        ant.copy file: "${project.parent.project('module-graal-bridge').projectDir}/build/libs/hugheba-graaljs-ignite.jar", todir: "./lib/"
+        ant.copy todir: "./lib/", {
+            ant.fileset dir: "${project.parent.project('module-graal-bridge').projectDir}/build/libs/", {
+                include name: "*.jar"
+            }
+        }
     }
 }
