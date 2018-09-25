@@ -15,10 +15,10 @@ module.exports = class IgniteBridge {
     initCaches() {
         var me = this;
         try {
-            var configCaches = this.config.caches;
+            let configCaches = this.config.caches;
             configCaches.forEach( function(cache) {
                 if (cache.name) {
-                    me.caches[cache.name] = me.javaBridge.getOrCreateCache(cache.name);
+                    me.caches[cache.name] = me.javaBridge.getCache(cache.name);
                 }
             });
         } catch(e) {
@@ -30,8 +30,16 @@ module.exports = class IgniteBridge {
         return this.javaBridge.ignite;
     }
 
-    getCaches() {
-        return this.caches;
+    getCache(cacheName) {
+        return this.javaBridge.getCache(cacheName)
+    }
+
+    getCounter(counterName, initialValue = 0) {
+        return this.javaBridge.getCounter(counterName, initialValue)
+    }
+
+    getRecord(recordName) {
+        return this.javaBridge.getRecord(recordName);
     }
 
     subscribe(topic, callback) {
@@ -43,6 +51,11 @@ module.exports = class IgniteBridge {
     }
 
     broadcast(topic, message) {
-        this.javaBridge.broadcast(topic, JSON.stringify(message));
+        let encodedMessage = message;
+        if (typeof message !== 'string') {
+            encodedMessage = JSON.stringify(message);
+        }
+        this.javaBridge.broadcast(topic, encodedMessage);
     }
-}
+
+};

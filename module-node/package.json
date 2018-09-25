@@ -21,10 +21,11 @@
     "lib"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --jvm --jvm.cp='lib/hugheba-graaljs-ignite-all.jar' node_modules/mocha/bin/_mocha"
   },
   "license": "ISC",
-  "dev-dependencies": {
+  "devDependencies": {
+    "mocha": "^5.2.0",
     "release-it": "^7.6.1"
   }
 }

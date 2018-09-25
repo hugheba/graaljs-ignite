@@ -14,6 +14,11 @@ dependencies() {
     compile "org.codehaus.groovy:groovy-all:2.5.2"
     compile "com.google.code.gson:gson:2.8.5"
     compile "org.apache.ignite:ignite-core:2.6.0"
+
+    testCompile "org.spockframework:spock-core:1.2-groovy-2.5"
+    testCompile "org.hamcrest:hamcrest-core:1.3"
+    testRuntime "net.bytebuddy:byte-buddy:1.8.21"
+    testRuntime "org.objenesis:objenesis:2.6"
 }
 
 jar {
