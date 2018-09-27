@@ -27,7 +27,9 @@
     "lib"
   ],
   "scripts": {
-    "test": "node --jvm --jvm.cp='lib/hugheba-graaljs-ignite-all.jar' node_modules/mocha/bin/_mocha"
+    "build-dependencies": "cd ../ && ./gradlew release",
+    "mocha": "node --jvm --jvm.cp='lib/hugheba-graaljs-ignite-all.jar' node_modules/mocha/bin/_mocha",
+    "test": "npm run build-dependencies && npm run mocha"
   },
   "license": "ISC",
   "devDependencies": {
