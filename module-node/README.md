@@ -141,13 +141,14 @@ console.log("The current counter value is " + counter.incrementAndGet());
 Cluster wide pub/sub functionality.
 
 ```javascript
+var eventBus = ib.getEventBus();
 var topic = 'my_cluster_topic';
 
-ib.subscribe(topic, function(message) {
+eventBus.subscribe(topic, function(message) {
     console.log('Topic ' + topic + ' received message: ' + message);
     console.log('Topic ' + topic + '.message: ' + JSON.parse(message).message);
 });
-ib.broadcast(topic, {
+eventBus.broadcast(topic, {
     status: true,
     code: 200,
     message: 'This object will be JSON serialized over the wire, and sent to every subscriber in the cluster.',

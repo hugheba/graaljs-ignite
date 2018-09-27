@@ -32,4 +32,4 @@ shadowJar {
     archiveName = "hugheba-graaljs-ignite-all.${extension}"
 }
 
-task release(dependsOn: [jar,shadowJar])
+task release(dependsOn: [jar,shadowJar,test])

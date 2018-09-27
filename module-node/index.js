@@ -30,6 +30,10 @@ module.exports = class IgniteBridge {
         return this.javaBridge.ignite;
     }
 
+    getEventBus() {
+        return this.javaBridge.getEventBus();
+    }
+
     getCache(cacheName) {
         return this.javaBridge.getCache(cacheName)
     }

@@ -9,6 +9,7 @@ import com.hugheba.graal.js.ignite.model.IgniteBridgeConfiguration
 import com.hugheba.graal.js.ignite.model.IgniteBridgeConnectionConfig
 import com.hugheba.graal.js.ignite.model.IgniteBridgeTcpDiscoveryIpFinder
 import groovy.transform.CompileStatic
+import groovy.util.logging.Log
 import org.apache.ignite.Ignite
 import org.apache.ignite.IgniteMessaging
 import org.apache.ignite.Ignition
@@ -25,37 +26,21 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.s3.TcpDiscoveryS3IpFinder
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder
 import org.graalvm.polyglot.Value
 
-
+@Log
 @CompileStatic
 class IgniteBridge {
 
-    class EBEventListener implements IgniteBiPredicate<UUID, String> {
-
-        Value jsEventListener
-
-        EBEventListener(Value jsEventListener) {
-            setJsEventListener(jsEventListener)
-        }
-
-        @Override
-        boolean apply(UUID uuid, String msg) {
-            if (jsEventListener!=null) (jsEventListener).executeVoid(msg)
-
-            true
-        }
-    }
-
+    final EventBus eventBus
     final Map<String, Cache> caches = [:]
     final Map<String, Record> records = [:]
     final Map<String, Counter> counters = [:]
-    final Map<String, EBEventListener> listeners = [:]
 
     IgniteBridgeConfiguration config
     Ignite ignite
-    IgniteMessaging eb
 
     IgniteBridge(Value config) {
         this(new Gson().fromJson(config.as(String) as String, IgniteBridgeConfiguration) as IgniteBridgeConfiguration)
+        log.info("Starting Ingite with configuration: ${config.as(String)}")
     }
 
     IgniteBridge(IgniteBridgeConfiguration config) {
@@ -65,8 +50,7 @@ class IgniteBridge {
                 cacheCfg: buildCaches()
         )
         ignite = Ignition.start(cfg)
-
-        eb = ignite.message()
+        eventBus = new EventBus(ignite)
     }
 
     private TcpDiscoveryIpFinder buildIpFinder() {
@@ -137,17 +121,8 @@ class IgniteBridge {
         } as CacheConfiguration[]
     }
 
-    void subscribe(String topic, Value jsEventListener) {
-        listeners[topic] = new EBEventListener(jsEventListener)
-        eb.localListen(topic, listeners[topic])
-    }
-
-    void unsubscribe(String topic, Value jsEventListener) {
-        eb.stopLocalListen(topic, listeners[topic])
-    }
-
-    void broadcast(String topic, String message) {
-        eb.sendOrdered(topic, message, 1000)
+    EventBus getEventBus() {
+        eventBus
     }
 
     Cache getCache(String cacheName) {

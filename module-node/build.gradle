@@ -6,7 +6,9 @@ node { download = false }
 
 task release() {
     dependsOn ':module-graal-bridge:release'
+}
 
+task cleanLib() {
     doFirst {
         ant.delete file: './lib/**/*.jar'
         ant.copy todir: "./lib/", {
@@ -16,3 +18,4 @@ task release() {
         }
     }
 }
+release.dependsOn cleanLib

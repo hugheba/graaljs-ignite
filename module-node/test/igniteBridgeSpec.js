@@ -64,12 +64,13 @@ describe('Ignite', () => {
     });
 
     describe('EventBus', () => {
+        const eventBus = igniteBridge.getEventBus();
         it ('should subscribe and broadcas events', (done) => {
-            igniteBridge.subscribe(TOPIC_NAME, (msg) => {
+            eventBus.subscribe(TOPIC_NAME, (msg) => {
                 assert.equal(TOPIC_MSG, msg);
                 done();
             });
-            igniteBridge.broadcast(TOPIC_NAME, TOPIC_MSG);
+            eventBus.broadcast(TOPIC_NAME, TOPIC_MSG);
         });
     });
 
@@ -90,6 +91,7 @@ describe('Ignite', () => {
         it ('should record.subscribe', (done) => {
             let FIRSTNAME_SAM = 'Sam';
             record1.subscribe(PROP_FIRSTNAME, (firstname) => {
+                console.log(`Got should record.subscribe message ${firstname}`);
                 assert.equal(FIRSTNAME_SAM, firstname);
                 done();
             });
