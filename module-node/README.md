@@ -56,42 +56,93 @@ Modify the run command above to look like this:
 |---|---|---|---|
 | 1.0.0 | 2.6.0 | 2.8.5 | 2.5.2 |
 
-## Example
+## Usage
+
+This module provides functionality to cluster multiple instances of a Node.Js application 
+running under a GraalVM.
+
+The `IgniteBridge` is the module's main class which provides simplified access to Ignite features detailed below.
+
+> Although the IgniteBridge covers most of Ignite's higher level functionality, 
+direct access to the Ignite instance is still available. 
+
+
+### Configuration
+
+See [test/resources/igniteConfig.js](test/resources/igniteConfig.js) for more configuration examples.
 
 ```javascript
 var IgniteBridge = require('hugheba-graaljs-ignite');
 
 var config = {
         connection: {
-            // @see https://apacheignite.readme.io/docs/tcpip-discovery
             ipFinder: 'TcpDiscoveryMulticastIpFinder', 
-            // IP Address of other nodes in cluster
             addresses: ['127.0.0.1:47500..47509'],
-            // Used only for discovery: 'TcpDiscoveryMulticastIpFinder'
             multicastGroup: '228.10.10.157', 
         },
-        caches: [
-            {
-                // Name for cache in Ignite
-                name: 'default',
-                // Options are: LOCAL, PARTITIONED or REPLICATED, 
-                // @see https://apacheignite.readme.io/docs/cache-modes
+        caches: {
+            'default' : {
                 cacheMode: 'PARTITIONED' 
             },
-        ],
+        },
 };
 
-var ib = new IgniteBridge(config),
-    ignite = ib.getIgnite(),
-    defaultCache = ib.getCaches()[config.caches[0].name],
-    cacheKey = 'cache_key_1',
-    topic = 'my_cluster_topic';
+var ib = new IgniteBridge(config);
+```
+
+### Ignite Direct Access
+
+The underlying Ignite instance can be accessed for more advanced configuration and functionality.
+
+```javascript
+var ignite = ib.getIgnite();
+```
+
+### Caches
+
+Cluster wide shared caches.
+
+```javascript
+var defaultCache = ib.getCache(config.caches[0].name),
+cacheKey = 'cache_key_1';
 
 // Cache Example
 defaultCache.put(cacheKey, 'My Cache Data');
 console.log('Cache returned ' + defaultCache.get(cacheKey));
+```
 
-// Messaging Example
+### Records
+
+Records are similar to caches but are wired up to allow for listening to property changes.
+
+This functionality can be extended to notify client UI's of state changes over WebSockets.
+
+```javascript
+var bobRecord = ib.getRecord("users/bob");
+bobRecord.subscribe('firstname', function(newVal) {
+    console.log("users/bob firstname changed to " + newVal);
+});
+bobRecord.put('firstname', 'Bob');
+bobRecord.put('firstname', 'Robert');
+bobRecord.put('firstname', 'Bobby');
+```
+
+### Counters
+
+Counters allow for atomic increment/decrement operations across the cluster.
+
+```javascript
+var counter = ib.getCounter('mycounter');
+console.log("The current counter value is " + counter.incrementAndGet());
+```
+
+### Pub/Sub
+
+Cluster wide pub/sub functionality.
+
+```javascript
+var topic = 'my_cluster_topic';
+
 ib.subscribe(topic, function(message) {
     console.log('Topic ' + topic + ' received message: ' + message);
     console.log('Topic ' + topic + '.message: ' + JSON.parse(message).message);
@@ -103,3 +154,7 @@ ib.broadcast(topic, {
 });
 
 ```
+
+### More examples
+
+See [module-node/test/test.js](module-node/test/test.js) for more examples.

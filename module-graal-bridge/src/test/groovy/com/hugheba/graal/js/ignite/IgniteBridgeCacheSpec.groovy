@@ -22,7 +22,7 @@ class IgniteBridgeCacheSpec extends Specification {
                         multicastGroup: "228.10.10.157"
                 ),
                 caches: [
-                        new IgniteBridgeCacheConfig(name: 'default')
+                        'default': new IgniteBridgeCacheConfig(name: 'default')
                 ]
         ))
     }

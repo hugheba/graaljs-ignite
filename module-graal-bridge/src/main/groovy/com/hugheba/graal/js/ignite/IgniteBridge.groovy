@@ -1,7 +1,10 @@
 package com.hugheba.graal.js.ignite
 
+import com.amazonaws.auth.BasicAWSCredentials
+import com.amazonaws.auth.EnvironmentVariableCredentialsProvider
 import com.google.gson.Gson
 import com.hugheba.graal.js.ignite.exception.IgniteBridgeConfigurationException
+import com.hugheba.graal.js.ignite.model.IgniteBridgeCacheConfig
 import com.hugheba.graal.js.ignite.model.IgniteBridgeConfiguration
 import com.hugheba.graal.js.ignite.model.IgniteBridgeConnectionConfig
 import com.hugheba.graal.js.ignite.model.IgniteBridgeTcpDiscoveryIpFinder
@@ -15,7 +18,10 @@ import org.apache.ignite.configuration.IgniteConfiguration
 import org.apache.ignite.lang.IgniteBiPredicate
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi
 import org.apache.ignite.spi.discovery.tcp.ipfinder.TcpDiscoveryIpFinder
+import org.apache.ignite.spi.discovery.tcp.ipfinder.gce.TcpDiscoveryGoogleStorageIpFinder
+import org.apache.ignite.spi.discovery.tcp.ipfinder.kubernetes.TcpDiscoveryKubernetesIpFinder
 import org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMulticastIpFinder
+import org.apache.ignite.spi.discovery.tcp.ipfinder.s3.TcpDiscoveryS3IpFinder
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder
 import org.graalvm.polyglot.Value
 
@@ -67,10 +73,43 @@ class IgniteBridge {
         TcpDiscoveryIpFinder ipFinder
         IgniteBridgeConnectionConfig connCfg = this.config.connection
         switch(connCfg.ipFinder) {
+            case {it == IgniteBridgeTcpDiscoveryIpFinder.TcpDiscoveryS3IpFinder}:
+                if (!connCfg.awsBucket) {
+                    throw new IgniteBridgeConfigurationException(
+                            "Missing [config.connection.awsBucket] for ${IgniteBridgeTcpDiscoveryIpFinder.TcpDiscoveryS3IpFinder}"
+                    )
+                }
+                ipFinder = new TcpDiscoveryS3IpFinder(
+                        bucketName: connCfg.awsBucket,
+                        awsCredentials: new EnvironmentVariableCredentialsProvider().getCredentials()
+                )
+                break
+            case {it == IgniteBridgeTcpDiscoveryIpFinder.TcpDiscoveryGoogleStorageIpFinder}:
+                if (!connCfg.googleProject || !connCfg.googleBucket) {
+                    throw new IgniteBridgeConfigurationException(
+                            "Missing [config.connection.googleProject,config.connetion.googleBucket] for ${IgniteBridgeTcpDiscoveryIpFinder.TcpDiscoveryGoogleStorageIpFinder}"
+                    )
+                }
+                ipFinder = new TcpDiscoveryGoogleStorageIpFinder(
+                        projectName: connCfg.googleProject,
+                        bucketName: connCfg.googleProject,
+                )
+                break
+            case {it == IgniteBridgeTcpDiscoveryIpFinder.TcpDiscoveryKubernetesIpFinder}:
+                if (!connCfg.kubeNamespace || !connCfg.kubeServiceName) {
+                    throw new IgniteBridgeConfigurationException(
+                            "Missing [config.connection.kubeNamespace,config.connection.kubeServiceName] for ${IgniteBridgeTcpDiscoveryIpFinder.TcpDiscoveryKubernetesIpFinder}"
+                    )
+                }
+                ipFinder = new TcpDiscoveryKubernetesIpFinder(
+                        namespace: connCfg.kubeNamespace,
+                        serviceName: connCfg.kubeServiceName
+                )
+                break
             case {it == IgniteBridgeTcpDiscoveryIpFinder.TcpDiscoveryVmIpFinder}:
                 if (!connCfg.addresses || !connCfg.multicastGroup) {
                     throw new IgniteBridgeConfigurationException(
-                            "Missing config.connection.addresses for ${IgniteBridgeTcpDiscoveryIpFinder.TcpDiscoveryVmIpFinder.name()}"
+                            "Missing [config.connection.addresses] for ${IgniteBridgeTcpDiscoveryIpFinder.TcpDiscoveryVmIpFinder.name()}"
                     )
                 }
                 ipFinder = new TcpDiscoveryVmIpFinder(addresses: connCfg.addresses)
@@ -79,7 +118,7 @@ class IgniteBridge {
             default:
                 if (!connCfg.addresses || !connCfg.multicastGroup) {
                     throw new IgniteBridgeConfigurationException(
-                            "Missing either config.connection.addresses or config.connection.multicastGroup for ${IgniteBridgeTcpDiscoveryIpFinder.TcpDiscoveryMulticastIpFinder.name()}"
+                            "Missing [config.connection.addresses or config.connection.multicastGroup] for ${IgniteBridgeTcpDiscoveryIpFinder.TcpDiscoveryMulticastIpFinder.name()}"
                     )
                 }
                 ipFinder = new TcpDiscoveryMulticastIpFinder()
@@ -92,8 +131,9 @@ class IgniteBridge {
     }
 
     private CacheConfiguration[] buildCaches() {
-        this.config.caches.collect {
-            def cache = new CacheConfiguration<String, String>(name: it.name, cacheMode: it.cacheMode as CacheMode)
+        this.config.caches.keySet().collect {
+            IgniteBridgeCacheConfig cacheConfig = this.config.caches[it]
+            def cache = new CacheConfiguration<String, String>(name: it, cacheMode: cacheConfig.cacheMode as CacheMode)
         } as CacheConfiguration[]
     }
 

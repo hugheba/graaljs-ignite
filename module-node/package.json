@@ -14,7 +14,13 @@
     "jvm",
     "java",
     "apache",
-    "ignite"
+    "ignite",
+    "cluster",
+    "grid",
+    "cache",
+    "messaging",
+    "machine",
+    "learning"
   ],
   "main": "index.js",
   "files": [

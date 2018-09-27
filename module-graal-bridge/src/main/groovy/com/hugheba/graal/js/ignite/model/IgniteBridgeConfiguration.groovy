@@ -2,5 +2,5 @@ package com.hugheba.graal.js.ignite.model
 
 class IgniteBridgeConfiguration {
     IgniteBridgeConnectionConfig connection
-    List<IgniteBridgeCacheConfig> caches
+    Map<String, IgniteBridgeCacheConfig> caches
 }

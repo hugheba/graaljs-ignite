@@ -6,9 +6,18 @@ class IgniteBridgeConnectionConfig {
     IgniteBridgeTcpDiscoveryIpFinder ipFinder = IgniteBridgeTcpDiscoveryIpFinder.TcpDiscoveryMulticastIpFinder
     List<String> addresses
     String multicastGroup
+    String awsBucket
+    String googleProject
+    String googleBucket
+    String kubeNamespace
+    String kubeServiceName
 }
 
 enum IgniteBridgeTcpDiscoveryIpFinder {
-    TcpDiscoveryMulticastIpFinder, TcpDiscoveryVmIpFinder
+    TcpDiscoveryMulticastIpFinder,
+    TcpDiscoveryVmIpFinder,
+    TcpDiscoveryKubernetesIpFinder,
+    TcpDiscoveryS3IpFinder,
+    TcpDiscoveryGoogleStorageIpFinder
 }
 
