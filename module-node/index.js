@@ -15,12 +15,9 @@ module.exports = class IgniteBridge {
     initCaches() {
         var me = this;
         try {
-            let configCaches = this.config.caches;
-            configCaches.forEach( function(cache) {
-                if (cache.name) {
-                    me.caches[cache.name] = me.javaBridge.getCache(cache.name);
-                }
-            });
+            for (var cacheName in this.config.caches) {
+                    me.caches[cacheName] = me.javaBridge.getCache(cacheName);
+            }
         } catch(e) {
             console.error('Unable to load Ignite caches!', e);
         }
