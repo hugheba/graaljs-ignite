@@ -1,5 +1,21 @@
 module.exports = {
+    gridName: 'my-ignite-grid',
+    instanceName: 'my-node-name',
+    beforeIgniteStart: () => console.log('Before Ignite Start'),
+    afterIgniteStart: () => console.log('After Ignite Start'),
+    beforeIgniteStop: () => console.log('Before Ignite Start'),
+    afterIgniteStop: () => console.log('After Ignite Start'),
     connection: {
+        /**
+         * Initial discovery local port to listen to
+         */
+        discoveryLocalPort: 48500,
+
+        /**
+         * Initial discovery local port range
+         */
+        discoveryLocalPortRange: 20,
+
         /**
          * Select node discovery method and options below
          *
@@ -50,7 +66,17 @@ module.exports = {
          * @see https://apacheignite-mix.readme.io/v2/docs/kubernetes-discovery
          */
         kubeNamespace: 'default',
-        kubeServiceName: 'ignite'
+        kubeServiceName: 'ignite',
+
+        /**
+         * Initial communication local port to listen to
+         */
+        communicationLocalPort: 48100,
+
+        /**
+         * Initial communication local port range
+         */
+        communicationLocalPortRange: 20,
     },
 
     /**

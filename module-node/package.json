@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-RC6",
+  "version": "1.0.0-RC7",
   "name": "hugheba-graaljs-ignite",
   "description": "Apache Ignite integration into Node.js running under GraalVM",
   "homepage": "https://github.com/hugheba/graaljs-ignite",
@@ -28,12 +28,15 @@
   ],
   "scripts": {
     "build-dependencies": "cd ../ && ./gradlew release",
-    "mocha": "node --jvm --jvm.cp='lib/hugheba-graaljs-ignite-all.jar' node_modules/mocha/bin/_mocha",
+    "mocha": "~/.sdkman/candidates/java/19.2.0-grl/bin/node --jvm --vm.cp='lib/hugheba-graaljs-ignite-all.jar' node_modules/mocha/bin/_mocha",
     "test": "npm run build-dependencies && npm run mocha"
   },
   "license": "ISC",
   "devDependencies": {
-    "mocha": "^5.2.0",
-    "release-it": "^7.6.1"
+    "mocha": "^6.2.0",
+    "release-it": "^12.3.6"
+  },
+  "dependencies": {
+    "uuid": "^3.3.2"
   }
 }

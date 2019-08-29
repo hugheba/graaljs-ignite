@@ -40,6 +40,16 @@ class IgniteBridgeCacheSpec extends Specification {
         cache instanceof Cache
     }
 
+    def "should save cache key value"() {
+        when:
+        def cache = igniteBridge.getCache('default')
+        cache.put(RECORD_NAME, PROP_FIRSTNAME);
+        def result = cache.get(RECORD_NAME);
+
+        then:
+        PROP_FIRSTNAME == result
+    }
+
     def "can save property to Record"() {
         when:
         String bob = 'Bob'

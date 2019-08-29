@@ -1,15 +1,22 @@
+const uuidv1 = require('uuid/v1');
+
 module.exports = class IgniteBridge {
 
     constructor(config) {
-        this.config = config;
-        this.caches = {};
-        this.connect();
-        this.initCaches();
+            this.config = config;
+            this.caches = {};
+            this.connect();
+            this.initCaches();
     }
 
     connect() {
         const IB = Java.type('com.hugheba.graal.js.ignite.IgniteBridge');
+        /*if (this.config.instanceName this.config.instanceName = uuidv1();*/
         this.javaBridge = new IB(JSON.stringify(this.config));
+    }
+
+    shutdown() {
+        this.javaBridge.shutdown();
     }
 
     initCaches() {

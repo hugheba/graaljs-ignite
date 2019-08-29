@@ -7,7 +7,7 @@ class Cache {
 
     Ignite ignite
     String cacheName
-    IgniteCache<String, Object> cache
+    IgniteCache<Object, Object> cache
 
     Cache(Ignite ignite, String cacheName) {
         this.ignite = ignite
@@ -15,11 +15,11 @@ class Cache {
         cache = ignite.getOrCreateCache(cacheName)
     }
 
-    void put(String key, Object value) {
+    void put(Object key, Object value) {
         cache.put(key, value)
     }
 
-    Object get(String key) {
+    Object get(Object key) {
         cache.get(key)
     }
 }

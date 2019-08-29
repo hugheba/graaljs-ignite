@@ -1,0 +1,11 @@
+{
+  "CACHE_KEY"         : 1,
+  "CACHE_VALUE"       : "test_value",
+  "CACHE_TYPE"        : "com.hugheba.graal.js.ignite.Cache",
+  "COUNTER_NAME"      : "test_counter",
+  "COUNTER_TYPE"      : "com.hugheba.graal.js.ignite.Counter",
+  "TOPIC_NAME"        : "test_topic",
+  "TOPIC_MSG"         : "This is an event message",
+  "RECORD_NAME"       : "record1",
+  "RECORD_TYPE"       : "com.hugheba.graal.js.ignite.Record"
+}

@@ -1,6 +1,6 @@
 package com.hugheba.graal.js.ignite
 
-import com.amazonaws.auth.BasicAWSCredentials
+
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider
 import com.google.gson.Gson
 import com.hugheba.graal.js.ignite.exception.IgniteBridgeConfigurationException
@@ -11,12 +11,14 @@ import com.hugheba.graal.js.ignite.model.IgniteBridgeTcpDiscoveryIpFinder
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log
 import org.apache.ignite.Ignite
-import org.apache.ignite.IgniteMessaging
 import org.apache.ignite.Ignition
 import org.apache.ignite.cache.CacheMode
 import org.apache.ignite.configuration.CacheConfiguration
 import org.apache.ignite.configuration.IgniteConfiguration
-import org.apache.ignite.lang.IgniteBiPredicate
+import org.apache.ignite.lifecycle.LifecycleBean
+import org.apache.ignite.spi.communication.CommunicationSpi
+import org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi
+import org.apache.ignite.spi.discovery.DiscoverySpi
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi
 import org.apache.ignite.spi.discovery.tcp.ipfinder.TcpDiscoveryIpFinder
 import org.apache.ignite.spi.discovery.tcp.ipfinder.gce.TcpDiscoveryGoogleStorageIpFinder
@@ -34,23 +36,67 @@ class IgniteBridge {
     final Map<String, Cache> caches = [:]
     final Map<String, Record> records = [:]
     final Map<String, Counter> counters = [:]
+    final Lifecycle lifecycle = new Lifecycle()
+    static final Gson gson = new Gson()
 
     IgniteBridgeConfiguration config
     Ignite ignite
 
+
+    static isRunning(String instanceName) {
+        if (Ignition.state(instanceName)) {
+            return true
+        } else {
+            false
+        }
+    }
+
     IgniteBridge(Value config) {
-        this(new Gson().fromJson(config.as(String) as String, IgniteBridgeConfiguration) as IgniteBridgeConfiguration)
-        log.info("Starting Ingite with configuration: ${config.as(String)}")
+        this(gson.fromJson(config.as(String) as String, IgniteBridgeConfiguration) as IgniteBridgeConfiguration)
     }
 
     IgniteBridge(IgniteBridgeConfiguration config) {
+
+        if (ignite) {
+            println("Ignite already started, reusing instance.")
+            return
+        }
+
+        println("Starting Ingite with configuration: ${gson.toJson(config)}")
+
         this.config = config
+
+        lifecycle.with {
+            beforeIgniteStart = config.beforeIgniteStart
+            afterIgniteStart = config.afterIgniteStart
+            beforeIgniteStop = config.beforeIgniteStop
+            afterIgniteStop = config.afterIgniteStop
+        }
+
+        def conn = config.connection;
+
+        DiscoverySpi discoverySpi = new TcpDiscoverySpi(ipFinder: buildIpFinder())
+        if (conn.discoveryLocalPort) discoverySpi.localPort = conn.discoveryLocalPort
+        if (conn.discoveryLocalPortRange) discoverySpi.localPortRange = conn.discoveryLocalPortRange
+
+        CommunicationSpi communicationSpi = new TcpCommunicationSpi()
+        if (conn.communicationLocalPort) communicationSpi.localPort = conn.communicationLocalPort
+
         IgniteConfiguration cfg = new IgniteConfiguration(
-                discoverySpi: new TcpDiscoverySpi(ipFinder: buildIpFinder()),
-                cacheCfg: buildCaches()
+                gridName: config.gridName,
+                igniteInstanceName: config.instanceName,
+                lifecycleBeans: [lifecycle] as LifecycleBean[],
+                discoverySpi: discoverySpi,
+                communicationSpi: communicationSpi,
+                cacheCfg: buildCaches(),
         )
+
         ignite = Ignition.start(cfg)
         eventBus = new EventBus(ignite)
+    }
+
+    void shutdown() {
+        Ignition.stop(false);
     }
 
     private TcpDiscoveryIpFinder buildIpFinder() {
@@ -91,7 +137,7 @@ class IgniteBridge {
                 )
                 break
             case {it == IgniteBridgeTcpDiscoveryIpFinder.TcpDiscoveryVmIpFinder}:
-                if (!connCfg.addresses || !connCfg.multicastGroup) {
+                if (!connCfg.addresses) {
                     throw new IgniteBridgeConfigurationException(
                             "Missing [config.connection.addresses] for ${IgniteBridgeTcpDiscoveryIpFinder.TcpDiscoveryVmIpFinder.name()}"
                     )
