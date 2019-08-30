@@ -54,7 +54,7 @@ Modify the run command above to look like this:
 
 | hugheba-graaljs-ignite Version | Ignite Version | GSON Version | Groovy Version |
 |---|---|---|---|
-| 1.0.0 | 2.6.0 | 2.8.5 | 2.5.2 |
+| 1.0.0 | 2.7.0 | 2.8.5 | 2.5.8 |
 
 ## Usage
 

@@ -22,4 +22,12 @@ class Cache {
     Object get(Object key) {
         cache.get(key)
     }
+
+    boolean containsKey(Object key) {
+        cache.containsKey(key)
+    }
+
+    Map<Object, Object> getAll(Set<Object> keys) {
+        cache.getAll(keys)
+    }
 }
