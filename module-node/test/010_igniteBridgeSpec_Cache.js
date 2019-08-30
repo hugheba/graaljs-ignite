@@ -11,11 +11,11 @@ describe('Ignite', () => {
         const defaultCache = igniteBridge.getCache('default');
 
         it('should cache be Java.isJavaObject', () => {
-            assert.equal(true, Java.isJavaObject(defaultCache));
+            assert.strictEqual(true, Java.isJavaObject(defaultCache));
         });
 
         it(`should cache be Java.typeName ${testValues.CACHE_TYPE}`, () => {
-            assert.equal(testValues.CACHE_TYPE, defaultCache.getClass().getName());
+            assert.strictEqual(testValues.CACHE_TYPE, defaultCache.getClass().getName());
         });
 
         it('should set cache value', () => {
@@ -26,7 +26,15 @@ describe('Ignite', () => {
 
         it('should get cache value', () => {
             let val = defaultCache.get(testValues.CACHE_KEY);
-            assert.equal(testValues.CACHE_VALUE, val);
+            assert.strictEqual(testValues.CACHE_VALUE, val);
+        });
+
+        it('should contain key', () => {
+            assert(defaultCache.containsKey(testValues.CACHE_KEY));
+        });
+
+        it('should not contain key', () => {
+            assert(!defaultCache.containsKey('0adfw23hkljsdf89d'));
         });
     });
 

@@ -107,8 +107,11 @@ var defaultCache = ib.getCache(config.caches[0].name),
 cacheKey = 'cache_key_1';
 
 // Cache Example
-defaultCache.put(cacheKey, 'My Cache Data');
-console.log('Cache returned ' + defaultCache.get(cacheKey));
+if (!defaultCache.containsKey(cacheKey)) {
+    defaultCache.put(cacheKey, 'My Cache Data');
+}
+var cacheValue = defaultCache.get(cacheKey);
+console.log('Cache returned ' + cacheValue);
 ```
 
 ### Records

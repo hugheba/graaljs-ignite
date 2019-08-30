@@ -11,23 +11,23 @@ describe('Ignite', () => {
         const counter = igniteBridge.getCounter(testValues.COUNTER_NAME);
 
         it('should counter be Java.isJavaObject', () => {
-            assert.equal(true, Java.isJavaObject(counter));
+            assert.strictEqual(true, Java.isJavaObject(counter));
         });
 
         it(`should counter be Java.typeName ${testValues.COUNTER_TYPE}`, () => {
-            assert.equal(testValues.COUNTER_TYPE, counter.getClass().getName());
+            assert.strictEqual(testValues.COUNTER_TYPE, counter.getClass().getName());
         });
 
         it('should counter initially be 0', () => {
-            assert.equal(0, counter.get());
+            assert.strictEqual(0, counter.get());
         });
 
         it('should counter incrementAndGet = 1', () => {
-            assert.equal(1, counter.incrementAndGet());
+            assert.strictEqual(1, counter.incrementAndGet());
         });
 
         it('should counter decrementAndGet = 0', () => {
-            assert.equal(0, counter.decrementAndGet());
+            assert.strictEqual(0, counter.decrementAndGet());
         });
 
     });

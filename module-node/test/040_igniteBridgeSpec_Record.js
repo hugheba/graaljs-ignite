@@ -12,20 +12,20 @@ describe('Ignite', () => {
             PROP_FIRSTNAME = 'firstname';
 
         it (`should record be Java.typeName ${testValues.RECORD_TYPE}`, () => {
-            assert.equal(testValues.RECORD_TYPE, record1.getClass().getName());
+            assert.strictEqual(testValues.RECORD_TYPE, record1.getClass().getName());
         });
 
         it ('should record set and get', () => {
             let FIRSTNAME_BOB = 'Bob';
             record1.put(PROP_FIRSTNAME, FIRSTNAME_BOB);
-            assert.equal(FIRSTNAME_BOB, record1.get(PROP_FIRSTNAME));
+            assert.strictEqual(FIRSTNAME_BOB, record1.get(PROP_FIRSTNAME));
         });
 
         it ('should record.subscribe', (done) => {
             let FIRSTNAME_SAM = 'Sam';
             record1.subscribe(PROP_FIRSTNAME, (firstname) => {
                 console.log(`Got should record.subscribe message ${firstname}`);
-                assert.equal(FIRSTNAME_SAM, firstname);
+                assert.strictEqual(FIRSTNAME_SAM, firstname);
                 done();
             });
             record1.put(PROP_FIRSTNAME, FIRSTNAME_SAM);

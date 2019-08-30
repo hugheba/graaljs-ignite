@@ -11,7 +11,7 @@ describe('Ignite', () => {
         const eventBus = igniteBridge.getEventBus();
         it ('should subscribe and broadcas events', (done) => {
             eventBus.subscribe(testValues.TOPIC_NAME, (msg) => {
-                assert.equal(testValues.TOPIC_MSG, msg);
+                assert.strictEqual(testValues.TOPIC_MSG, msg);
                 done();
             });
             eventBus.broadcast(testValues.TOPIC_NAME, testValues.TOPIC_MSG);
