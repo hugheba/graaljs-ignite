@@ -31,11 +31,15 @@ module.exports = class IgniteBridge {
     }
 
     getIgnite() {
-        return this.javaBridge.ignite;
+        return this.javaBridge.getIgnite();
     }
 
     getEventBus() {
         return this.javaBridge.getEventBus();
+    }
+
+    getInfo() {
+        return this.javaBridge.getInfo();
     }
 
     getCache(cacheName) {

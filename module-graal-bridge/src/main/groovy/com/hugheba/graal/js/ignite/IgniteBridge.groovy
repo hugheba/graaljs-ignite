@@ -8,11 +8,14 @@ import com.hugheba.graal.js.ignite.model.IgniteBridgeCacheConfig
 import com.hugheba.graal.js.ignite.model.IgniteBridgeConfiguration
 import com.hugheba.graal.js.ignite.model.IgniteBridgeConnectionConfig
 import com.hugheba.graal.js.ignite.model.IgniteBridgeTcpDiscoveryIpFinder
+import com.hugheba.graal.js.ignite.model.IgniteClusterNodeInfo
+import com.hugheba.graal.js.ignite.model.IgniteInfo
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log
 import org.apache.ignite.Ignite
 import org.apache.ignite.Ignition
 import org.apache.ignite.cache.CacheMode
+import org.apache.ignite.cluster.ClusterNode
 import org.apache.ignite.configuration.CacheConfiguration
 import org.apache.ignite.configuration.IgniteConfiguration
 import org.apache.ignite.lifecycle.LifecycleBean
@@ -167,8 +170,31 @@ class IgniteBridge {
         } as CacheConfiguration[]
     }
 
+    Ignite getIgnite() {
+        ignite
+    }
+
     EventBus getEventBus() {
         eventBus
+    }
+
+    IgniteInfo getInfo() {
+        IgniteInfo info = new IgniteInfo()
+        info.clusterSize = ignite.cluster().nodes().size()
+        info.clusterNodes = ignite.cluster().nodes().collect { ClusterNode node ->
+            new IgniteClusterNodeInfo(
+                    id: node.id().toString(),
+                    local: node.local,
+                    hostnames: node.hostNames().collect {it.toString()},
+                    addresses: node.addresses().collect {it.toString()},
+//                    attributes: (node.attributes().collectEntries { key,value ->
+//                        ["${key}".toString(): "${value.toString()}".toString()]
+//                    }),
+                    client: node.attributes().get('org.apache.ignite.cache.client') as Boolean
+            )
+        }
+
+        info
     }
 
     Cache getCache(String cacheName) {
