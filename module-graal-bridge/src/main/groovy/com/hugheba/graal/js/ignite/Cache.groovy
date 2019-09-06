@@ -37,7 +37,7 @@ class Cache {
         cache.replace(key.toString(), value)
     }
 
-    void clear(Set<String> keys) {
+    void removeAll(Set<String> keys) {
         cache.removeAll(keys)
     }
 
