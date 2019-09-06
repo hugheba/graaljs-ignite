@@ -10,34 +10,35 @@ class Cache {
     String cacheName
     IgniteCache<String, Object> cache
 
-    Cache(Ignite ignite, String cacheName) {
+    Cache(Object ignite, String cacheName) {
         this.ignite = ignite
         this.cacheName = cacheName
         cache = ignite.getOrCreateCache(cacheName)
     }
 
-    void put(String key, Object value) {
-        cache.put(key, value)
+    void put(Object key, Object value) {
+        cache.put(key.toString(), value)
     }
 
-    Object get(String key) {
-        cache.get(key)
+    Object get(Object key) {
+        cache.get(key.toString())
     }
 
-    boolean containsKey(String key) {
-        cache.containsKey(key)
+    boolean containsKey(Object key) {
+        cache.containsKey(key.toString())
     }
 
-    Map<String, Object> getAll(Set<String> keys) {
-        cache.getAll(keys)
+    Map<Object, Object> getAll(Set<Object> keys) {
+
+        cache.getAll(keys.collect { it.toString() }.toSet())
     }
 
-    boolean replace(String key, Object value) {
-        cache.replace(key, value)
+    boolean replace(Object key, Object value) {
+        cache.replace(key.toString(), value)
     }
 
-    void clear(String key) {
-        cache.clear(key)
+    void clear(Object key) {
+        cache.clear(key.toString())
     }
 
     List<String> getCacheKeys() {
