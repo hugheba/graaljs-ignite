@@ -8,7 +8,7 @@ class Cache {
 
     Ignite ignite
     String cacheName
-    IgniteCache<Object, Object> cache
+    IgniteCache<String, Object> cache
 
     Cache(Ignite ignite, String cacheName) {
         this.ignite = ignite
@@ -16,33 +16,33 @@ class Cache {
         cache = ignite.getOrCreateCache(cacheName)
     }
 
-    void put(Object key, Object value) {
+    void put(String key, Object value) {
         cache.put(key, value)
     }
 
-    Object get(Object key) {
+    Object get(String key) {
         cache.get(key)
     }
 
-    boolean containsKey(Object key) {
+    boolean containsKey(String key) {
         cache.containsKey(key)
     }
 
-    Map<Object, Object> getAll(Set<Object> keys) {
+    Map<String, Object> getAll(Set<String> keys) {
         cache.getAll(keys)
     }
 
-    boolean replace(Object key, Object value) {
+    boolean replace(String key, Object value) {
         cache.replace(key, value)
     }
 
-    void clear(Object key) {
+    void clear(String key) {
         cache.clear(key)
     }
 
-    List<Object> getCacheKeys() {
-        List<Object> keys = new ArrayList<>();
-        cache.query(new ScanQuery<>(null)).forEach {entry -> keys.add((Object) entry.getKey())}
+    List<String> getCacheKeys() {
+        List<String> keys = new ArrayList<>();
+        cache.query(new ScanQuery<>(null)).forEach {entry -> keys.add((String) entry.getKey())}
 
         keys
     }
