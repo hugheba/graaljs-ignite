@@ -178,7 +178,7 @@ class IgniteBridge {
         eventBus
     }
 
-    IgniteInfo getInfo() {
+    String getInfo() {
         IgniteInfo info = new IgniteInfo()
         info.clusterSize = ignite.cluster().nodes().size()
         info.clusterNodes = ignite.cluster().nodes().collect { ClusterNode node ->
@@ -194,7 +194,7 @@ class IgniteBridge {
             )
         }
 
-        info
+        gson.toJson(info)
     }
 
     Cache getCache(String cacheName) {

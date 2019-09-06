@@ -2,6 +2,7 @@ package com.hugheba.graal.js.ignite
 
 import org.apache.ignite.Ignite
 import org.apache.ignite.IgniteCache
+import org.apache.ignite.cache.query.ScanQuery
 
 class Cache {
 
@@ -30,4 +31,20 @@ class Cache {
     Map<Object, Object> getAll(Set<Object> keys) {
         cache.getAll(keys)
     }
+
+    boolean replace(Object key, Object value) {
+        cache.replace(key, value)
+    }
+
+    void clear(Object key) {
+        cache.clear(key)
+    }
+
+    List<Object> getCacheKeys() {
+        List<Object> keys = new ArrayList<>();
+        cache.query(new ScanQuery<>(null)).forEach {entry -> keys.add((Object) entry.getKey())}
+
+        keys
+    }
+
 }
