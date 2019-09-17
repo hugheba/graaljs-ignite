@@ -180,6 +180,7 @@ class IgniteBridge {
 
     String getInfo() {
         IgniteInfo info = new IgniteInfo()
+        ignite.cluster().localNode()
         info.clusterSize = ignite.cluster().nodes().size()
         info.clusterNodes = ignite.cluster().nodes().collect { ClusterNode node ->
             new IgniteClusterNodeInfo(
